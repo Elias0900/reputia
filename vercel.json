@@ -1,13 +1,4 @@
 {
-  "version": 2,
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/success", "dest": "/success.html" },
-    { "src": "/cancel", "dest": "/cancel.html" },
-    { "src": "/blog", "dest": "/blog/index.html" },
-    { "src": "/blog/(.*)", "dest": "/blog/$1" },
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/(.*)\\.html", "dest": "/$1.html" },
-    { "src": "/(.*)", "dest": "/$1.html" }
-  ]
+  "cleanUrls": true,
+  "trailingSlash": false
 }
