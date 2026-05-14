@@ -1,698 +1,105 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Réputia — Répondez à vos avis Google en 1 clic</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Conseils e-réputation et avis Google | Réputia</title>
+<meta name="description" content="Guides pratiques pour gérer votre réputation Google, répondre aux avis clients et améliorer votre référencement local. Par l'équipe Réputia.">
+<link rel="canonical" href="https://reputia.fr/blog">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --ink: #0f0e0c;
-    --ink2: #3d3b35;
-    --ink3: #7a7770;
-    --paper: #faf8f4;
-    --paper2: #f0ede6;
-    --paper3: #e5e0d6;
-    --accent: #2a6e4e;
-    --accent2: #1d5038;
-    --accent-light: #e8f3ed;
-    --gold: #c4922a;
-    --gold-light: #fdf5e6;
-    --danger: #c0392b;
-    --r: 10px;
-    --font-display: 'Instrument Serif', Georgia, serif;
-    --font-body: 'DM Sans', sans-serif;
-  }
-
-  body {
-    font-family: var(--font-body);
-    background: var(--paper);
-    color: var(--ink);
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* ─── NAV ─── */
-  nav {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(250,248,244,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--paper3);
-    padding: 0 2rem;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 60px;
-  }
-  .logo { font-family: var(--font-display); font-size: 1.5rem; color: var(--ink); letter-spacing: -0.02em; }
-  .logo span { color: var(--accent); }
-  nav .nav-links { display: flex; gap: 2rem; align-items: center; }
-  nav .nav-links a { font-size: 0.875rem; color: var(--ink2); text-decoration: none; }
-  nav .nav-links a:hover { color: var(--accent); }
-  .btn-nav { background: var(--accent); color: #fff; padding: 8px 18px; border-radius: 6px; font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 0.2s; }
-  .btn-nav:hover { background: var(--accent2); }
-
-  /* ─── HERO ─── */
-  .hero {
-    max-width: 900px; margin: 0 auto;
-    padding: 6rem 2rem 4rem;
-    text-align: center;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--gold-light); border: 1px solid #e8d5a3;
-    color: var(--gold); font-size: 0.78rem; font-weight: 500;
-    padding: 5px 14px; border-radius: 20px; margin-bottom: 2rem;
-  }
-  .hero-badge::before { content: '★'; }
-  h1 {
-    font-family: var(--font-display);
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-    line-height: 1.1; letter-spacing: -0.03em;
-    color: var(--ink); margin-bottom: 1.5rem;
-  }
-  h1 em { color: var(--accent); font-style: italic; }
-  .hero p {
-    font-size: 1.1rem; color: var(--ink2); max-width: 560px;
-    margin: 0 auto 2.5rem; line-height: 1.7;
-  }
-  .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .btn-primary {
-    background: var(--accent); color: #fff;
-    padding: 14px 28px; border-radius: 8px;
-    font-size: 1rem; font-weight: 500;
-    text-decoration: none; border: none; cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
-  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
-  .btn-secondary {
-    background: transparent; color: var(--ink);
-    padding: 14px 28px; border-radius: 8px;
-    font-size: 1rem; font-weight: 400;
-    text-decoration: none; border: 1.5px solid var(--paper3);
-    cursor: pointer; transition: border-color 0.2s;
-  }
-  .btn-secondary:hover { border-color: var(--ink2); }
-  .hero-note { font-size: 0.8rem; color: var(--ink3); margin-top: 1rem; }
-
-  /* ─── DEMO WIDGET ─── */
-  .demo-section {
-    background: var(--paper2);
-    border-top: 1px solid var(--paper3);
-    border-bottom: 1px solid var(--paper3);
-    padding: 4rem 2rem;
-  }
-  .demo-inner { max-width: 800px; margin: 0 auto; }
-  .section-label {
-    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--accent);
-    margin-bottom: 0.75rem;
-  }
-  .section-title {
-    font-family: var(--font-display);
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
-    letter-spacing: -0.02em; margin-bottom: 0.5rem;
-  }
-  .section-sub { font-size: 0.95rem; color: var(--ink2); margin-bottom: 2rem; }
-
-  .demo-card {
-    background: var(--paper);
-    border: 1px solid var(--paper3);
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-  }
-  .demo-header {
-    background: var(--ink); color: var(--paper);
-    padding: 12px 20px;
-    display: flex; align-items: center; gap: 8px;
-    font-size: 0.85rem; font-weight: 500;
-  }
-  .demo-header .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .demo-header .dot.r { background: #ff5f56; }
-  .demo-header .dot.y { background: #ffbd2e; }
-  .demo-header .dot.g { background: #27c93f; }
-  .demo-header span { margin-left: 8px; opacity: 0.5; font-size: 0.78rem; }
-
-  .demo-body { padding: 24px; }
-
-  .review-card {
-    background: var(--paper2);
-    border: 1px solid var(--paper3);
-    border-radius: 10px; padding: 16px; margin-bottom: 16px;
-  }
-  .review-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .avatar {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--accent-light);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.8rem; font-weight: 600; color: var(--accent);
-    flex-shrink: 0;
-  }
-  .review-meta .name { font-size: 0.9rem; font-weight: 500; }
-  .review-meta .stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 1px; }
-  .review-meta .date { font-size: 0.75rem; color: var(--ink3); }
-  .review-text { font-size: 0.9rem; color: var(--ink2); line-height: 1.5; }
-
-  .business-input {
-    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
-  }
-  .business-input input, .business-input select {
-    font-family: var(--font-body);
-    font-size: 0.875rem;
-    background: var(--paper2);
-    border: 1px solid var(--paper3);
-    border-radius: 7px; padding: 9px 14px;
-    color: var(--ink); outline: none; flex: 1; min-width: 140px;
-  }
-  .business-input input:focus, .business-input select:focus {
-    border-color: var(--accent);
-  }
-
-  .tone-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-  .tone-pill {
-    font-family: var(--font-body);
-    font-size: 0.78rem; font-weight: 500;
-    padding: 5px 12px; border-radius: 20px;
-    border: 1.5px solid var(--paper3);
-    background: var(--paper); color: var(--ink2);
-    cursor: pointer; transition: all 0.15s;
-  }
-  .tone-pill.active, .tone-pill:hover {
-    border-color: var(--accent);
-    background: var(--accent-light);
-    color: var(--accent);
-  }
-
-  .generate-btn {
-    width: 100%;
-    background: var(--accent); color: #fff;
-    border: none; border-radius: 8px;
-    padding: 13px; font-family: var(--font-body);
-    font-size: 0.95rem; font-weight: 500;
-    cursor: pointer; transition: background 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .generate-btn:hover { background: var(--accent2); }
-  .generate-btn:disabled { background: var(--ink3); cursor: not-allowed; }
-
-  .response-area {
-    margin-top: 16px;
-    background: var(--accent-light);
-    border: 1px solid #b8dcc9;
-    border-radius: 10px; padding: 16px;
-    display: none;
-  }
-  .response-area.visible { display: block; }
-  .response-label {
-    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
-  }
-  .response-text {
-    font-size: 0.9rem; color: var(--ink2); line-height: 1.65;
-    min-height: 80px;
-  }
-  .response-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-  .btn-small {
-    font-family: var(--font-body);
-    font-size: 0.78rem; font-weight: 500;
-    padding: 6px 14px; border-radius: 6px;
-    border: 1.5px solid var(--paper3);
-    background: var(--paper); color: var(--ink2);
-    cursor: pointer; transition: all 0.15s;
-  }
-  .btn-small:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-small.copy-done { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
-
-  .spinner {
-    display: inline-block; width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ─── SOCIAL PROOF ─── */
-  .stats-bar {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 2rem;
-    display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
-  }
-  .stat { text-align: center; }
-  .stat .num { font-family: var(--font-display); font-size: 2rem; color: #fff; }
-  .stat .lbl { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
-
-  /* ─── HOW IT WORKS ─── */
-  .section { max-width: 900px; margin: 0 auto; padding: 5rem 2rem; }
-  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 2.5rem; }
-  .step { position: relative; }
-  .step-num {
-    font-family: var(--font-display);
-    font-size: 3rem; color: var(--paper3);
-    line-height: 1; margin-bottom: 0.75rem;
-  }
-  .step h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
-  .step p { font-size: 0.875rem; color: var(--ink2); line-height: 1.6; }
-
-  /* ─── PRICING ─── */
-  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
-  .plan-card {
-    background: var(--paper);
-    border: 1.5px solid var(--paper3);
-    border-radius: 14px; padding: 2rem;
-    position: relative;
-  }
-  .plan-card.featured {
-    border-color: var(--accent);
-    background: #f0f8f4;
-  }
-  .plan-badge {
-    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-    background: var(--accent); color: #fff;
-    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
-    padding: 4px 14px; border-radius: 20px; text-transform: uppercase;
-    white-space: nowrap;
-  }
-  .plan-name { font-size: 0.875rem; font-weight: 600; color: var(--ink2); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
-  .plan-price { font-family: var(--font-display); font-size: 2.5rem; color: var(--ink); margin-bottom: 0.25rem; }
-  .plan-price span { font-family: var(--font-body); font-size: 0.875rem; color: var(--ink3); }
-  .plan-desc { font-size: 0.85rem; color: var(--ink2); margin-bottom: 1.5rem; }
-  .plan-features { list-style: none; margin-bottom: 1.5rem; }
-  .plan-features li {
-    font-size: 0.875rem; color: var(--ink2);
-    padding: 5px 0; display: flex; align-items: center; gap: 8px;
-  }
-  .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
-  .plan-features li.muted::before { content: '–'; color: var(--ink3); }
-  .plan-features li.muted { color: var(--ink3); }
-  .plan-cta {
-    display: block; text-align: center;
-    padding: 11px; border-radius: 8px;
-    font-size: 0.9rem; font-weight: 500;
-    text-decoration: none; border: 1.5px solid var(--ink);
-    color: var(--ink); transition: all 0.2s;
-  }
-  .plan-cta:hover { background: var(--ink); color: var(--paper); }
-  .plan-cta.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .plan-cta.primary:hover { background: var(--accent2); border-color: var(--accent2); }
-
-  /* ─── FAQ ─── */
-  .faq-list { margin-top: 2rem; }
-  .faq-item {
-    border-bottom: 1px solid var(--paper3);
-    padding: 1.25rem 0;
-  }
-  .faq-q {
-    font-size: 0.95rem; font-weight: 500;
-    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-    gap: 1rem;
-  }
-  .faq-q::after { content: '+'; font-size: 1.2rem; color: var(--accent); flex-shrink: 0; }
-  .faq-item.open .faq-q::after { content: '−'; }
-  .faq-a {
-    font-size: 0.875rem; color: var(--ink2); line-height: 1.65;
-    max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
-  }
-  .faq-item.open .faq-a { max-height: 200px; padding-top: 0.75rem; }
-
-  /* ─── FOOTER ─── */
-  footer {
-    background: var(--ink); color: rgba(255,255,255,0.5);
-    text-align: center; padding: 2rem;
-    font-size: 0.8rem;
-  }
-  footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
-
-  /* ─── ANIMATIONS ─── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .hero { animation: fadeUp 0.6s ease both; }
-  .hero-badge { animation: fadeUp 0.5s 0.1s ease both; }
-
-  .typing::after {
-    content: '|';
-    animation: blink 0.6s step-end infinite;
-    color: var(--accent);
-  }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 600px) {
-    .nav-links { display: none; }
-    .stats-bar { gap: 2rem; }
-    h1 { font-size: 2rem; }
-  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--ink:#0f0e0c;--ink2:#3d3b35;--ink3:#7a7770;--paper:#faf8f4;--paper2:#f0ede6;--paper3:#e5e0d6;--accent:#2a6e4e;--accent2:#1d5038;--accent-light:#e8f3ed;--font-display:'Instrument Serif',Georgia,serif;--font-body:'DM Sans',sans-serif}
+  body{font-family:var(--font-body);background:var(--paper);color:var(--ink);line-height:1.7}
+  nav{position:sticky;top:0;z-index:100;background:rgba(250,248,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--paper3);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{font-family:var(--font-display);font-size:1.4rem;color:var(--ink);text-decoration:none}
+  .logo span{color:var(--accent)}
+  .btn-nav{background:var(--accent);color:#fff;padding:8px 18px;border-radius:6px;font-size:.875rem;font-weight:500;text-decoration:none}
+  .page{max-width:900px;margin:0 auto;padding:4rem 2rem 6rem}
+  .blog-hero{margin-bottom:3rem}
+  .blog-hero .label{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.75rem}
+  .blog-hero h1{font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);letter-spacing:-.03em;margin-bottom:.75rem}
+  .blog-hero p{color:var(--ink2);font-size:1rem;max-width:520px}
+  .featured-article{background:var(--ink);color:var(--paper);border-radius:14px;padding:2.5rem;margin-bottom:3rem;text-decoration:none;display:block;transition:transform .15s}
+  .featured-article:hover{transform:translateY(-2px)}
+  .featured-article .tag{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.75rem}
+  .featured-article h2{font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.02em;margin-bottom:.75rem;color:#fff}
+  .featured-article p{color:rgba(255,255,255,.6);font-size:.95rem;line-height:1.65;margin-bottom:1.25rem}
+  .featured-article .meta{font-size:.8rem;color:rgba(255,255,255,.4)}
+  .articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem}
+  .article-card{background:var(--paper);border:1px solid var(--paper3);border-radius:12px;padding:1.5rem;text-decoration:none;color:var(--ink);transition:all .15s;display:flex;flex-direction:column}
+  .article-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .article-card .cat{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
+  .article-card h3{font-size:1rem;font-weight:500;line-height:1.4;margin-bottom:.5rem;flex:1}
+  .article-card .meta{font-size:.78rem;color:var(--ink3);margin-top:.75rem}
+  .section-title{font-family:var(--font-display);font-size:1.4rem;letter-spacing:-.02em;margin-bottom:1.5rem}
+  footer{background:var(--ink);color:rgba(255,255,255,.5);text-align:center;padding:2rem;font-size:.8rem}
+  footer a{color:rgba(255,255,255,.7);text-decoration:none}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <div class="logo">Réput<span>ia</span></div>
-  <div class="nav-links">
-    <a href="#demo">Démo</a>
-    <a href="#how">Comment ça marche</a>
-    <a href="#pricing">Tarifs</a>
-    <a class="btn-nav" href="#pricing">Essai gratuit</a>
+<nav><a href="/" class="logo">Réput<span>ia</span></a><a href="/#pricing" class="btn-nav">Essai gratuit</a></nav>
+<div class="page">
+  <div class="blog-hero">
+    <div class="label">Blog Réputia</div>
+    <h1>Guides et conseils e-réputation</h1>
+    <p>Tout ce que vous devez savoir pour gérer vos avis Google, améliorer votre note et attirer plus de clients locaux.</p>
   </div>
-</nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-badge">Propulsé par l'IA · Conçu pour les PME françaises</div>
-  <h1>Répondez à vos avis Google<br><em>en 1 clic.</em></h1>
-  <p>Réputia génère des réponses professionnelles et personnalisées à vos avis Google en quelques secondes. Fidélisez vos clients, améliorez votre référencement local, sans y passer votre temps.</p>
-  <div class="hero-cta">
-    <a href="#demo" class="btn-primary">Essayer gratuitement →</a>
-    <a href="#how" class="btn-secondary">Voir comment ça marche</a>
+  <a href="/blog/repondre-avis-google" class="featured-article">
+    <div class="tag">★ Article phare · Guide pratique</div>
+    <h2>Comment répondre aux avis Google : le guide complet 2026</h2>
+    <p>Avis positifs, négatifs, mitigés — apprenez à répondre à chaque situation avec des exemples concrets et des modèles prêts à l'emploi.</p>
+    <div class="meta">14 mai 2026 · 8 min de lecture</div>
+  </a>
+
+  <h2 class="section-title">Tous les articles</h2>
+  <div class="articles-grid">
+    <a href="/blog/importance-reputation-google" class="article-card">
+      <div class="cat">E-réputation</div>
+      <h3>Pourquoi votre réputation Google est votre meilleur commercial</h3>
+      <div class="meta">14 mai 2026 · 6 min</div>
+    </a>
+    <a href="/blog/gestion-avis-negatifs" class="article-card">
+      <div class="cat">Guide pratique</div>
+      <h3>Gérer les avis négatifs Google sans perdre de clients</h3>
+      <div class="meta">14 mai 2026 · 7 min</div>
+    </a>
+    <a href="/blog/ameliorer-note-google" class="article-card">
+      <div class="cat">SEO local</div>
+      <h3>Comment améliorer votre note Google en 30 jours</h3>
+      <div class="meta">14 mai 2026 · 6 min</div>
+    </a>
+    <a href="/blog/referencement-local-google" class="article-card">
+      <div class="cat">SEO local</div>
+      <h3>Référencement local Google : le guide complet pour les PME</h3>
+      <div class="meta">14 mai 2026 · 6 min</div>
+    </a>
+    <a href="/blog/google-business-profile-optimiser" class="article-card">
+      <div class="cat">Google Business</div>
+      <h3>Comment optimiser votre fiche Google Business Profile</h3>
+      <div class="meta">14 mai 2026 · 6 min</div>
+    </a>
+    <a href="/blog/avis-clients-restaurant" class="article-card">
+      <div class="cat">Restauration</div>
+      <h3>Gestion des avis clients pour restaurants : bonnes pratiques</h3>
+      <div class="meta">14 mai 2026 · 6 min</div>
+    </a>
+    <a href="/blog/outils-gestion-reputation" class="article-card">
+      <div class="cat">Outils</div>
+      <h3>Les meilleurs outils de gestion de réputation en ligne en 2026</h3>
+      <div class="meta">14 mai 2026 · 6 min</div>
+    </a>
+    <a href="/blog/taux-reponse-avis-google" class="article-card">
+      <div class="cat">Stratégie</div>
+      <h3>Quel taux de réponse aux avis Google viser ?</h3>
+      <div class="meta">14 mai 2026 · 6 min</div>
+    </a>
+    <a href="/blog/exemples-reponses-avis-positif" class="article-card">
+      <div class="cat">Modèles</div>
+      <h3>20 exemples de réponses aux avis positifs Google prêts à l'emploi</h3>
+      <div class="meta">14 mai 2026 · 6 min</div>
+    </a>
   </div>
-  <p class="hero-note">Gratuit jusqu'à 5 réponses/mois · Aucune carte bancaire requise</p>
-</section>
-
-<!-- STATS BAR -->
-<div class="stats-bar">
-  <div class="stat"><div class="num">93%</div><div class="lbl">des clients lisent les réponses aux avis</div></div>
-  <div class="stat"><div class="num">3M+</div><div class="lbl">établissements en France concernés</div></div>
-  <div class="stat"><div class="num">80%</div><div class="lbl">des avis reçus n'obtiennent aucune réponse</div></div>
 </div>
-
-<!-- DEMO INTERACTIVE -->
-<section class="demo-section" id="demo">
-  <div class="demo-inner">
-    <div class="section-label">Démo live</div>
-    <h2 class="section-title">Testez l'outil maintenant</h2>
-    <p class="section-sub">Collez un vrai avis de votre établissement et voyez la magie opérer.</p>
-
-    <div class="demo-card">
-      <div class="demo-header">
-        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-        <span>Réputia — Tableau de bord</span>
-      </div>
-      <div class="demo-body">
-
-        <!-- Example reviews -->
-        <p style="font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;">Choisir un avis exemple</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;" id="examples">
-          <button class="tone-pill active" onclick="loadExample(0)">⭐⭐⭐⭐⭐ Très positif</button>
-          <button class="tone-pill" onclick="loadExample(1)">⭐⭐⭐ Mitigé</button>
-          <button class="tone-pill" onclick="loadExample(2)">⭐ Négatif</button>
-        </div>
-
-        <div class="review-card" id="review-display">
-          <div class="review-top">
-            <div class="avatar" id="av">MR</div>
-            <div class="review-meta">
-              <div class="name" id="rev-name">Marie Renard</div>
-              <div class="stars" id="rev-stars">★★★★★</div>
-              <div class="date">il y a 2 jours</div>
-            </div>
-          </div>
-          <div class="review-text" id="rev-text">Accueil exceptionnel, plats délicieux et service rapide. Je recommande chaudement ce restaurant, on y reviendra très bientôt !</div>
-        </div>
-
-        <p style="font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;">Personnaliser la réponse</p>
-        <div class="business-input">
-          <input type="text" id="biz-name" placeholder="Nom de votre établissement" value="Le Comptoir du Marché">
-          <select id="biz-type">
-            <option value="restaurant">Restaurant</option>
-            <option value="hôtel">Hôtel</option>
-            <option value="salon">Salon de beauté</option>
-            <option value="garage">Garage</option>
-            <option value="boulangerie">Boulangerie</option>
-            <option value="boutique">Boutique</option>
-          </select>
-        </div>
-
-        <p style="font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;">Ton souhaité</p>
-        <div class="tone-pills" id="tones">
-          <button class="tone-pill active" data-tone="professionnel et chaleureux">Chaleureux</button>
-          <button class="tone-pill" data-tone="formel et professionnel">Formel</button>
-          <button class="tone-pill" data-tone="décontracté et sympa">Décontracté</button>
-          <button class="tone-pill" data-tone="sobre et élégant">Élégant</button>
-        </div>
-
-        <button class="generate-btn" id="gen-btn" onclick="generateResponse()">
-          <span id="btn-text">✦ Générer la réponse par IA</span>
-        </button>
-
-        <div class="response-area" id="response-area">
-          <div class="response-label">Réponse générée par Réputia</div>
-          <div class="response-text" id="response-text"></div>
-          <div class="response-actions">
-            <button class="btn-small" id="copy-btn" onclick="copyResponse()">📋 Copier</button>
-            <button class="btn-small" onclick="generateResponse()">↺ Régénérer</button>
-            <button class="btn-small" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">🚀 Utiliser sur mes vrais avis</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="section" id="how">
-  <div class="section-label">Fonctionnement</div>
-  <h2 class="section-title">Simple comme bonjour</h2>
-  <p class="section-sub">Connectez votre fiche Google, c'est tout. Réputia fait le reste.</p>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">01</div>
-      <h3>Connectez votre fiche Google</h3>
-      <p>Autorisez Réputia à accéder à votre fiche Google Business Profile en 2 clics. Aucune compétence technique requise.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">02</div>
-      <h3>Définissez votre ton</h3>
-      <p>Choisissez le style de réponse qui correspond à votre image de marque. Réputia apprend de vos préférences au fil du temps.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">03</div>
-      <h3>Validez ou automatisez</h3>
-      <p>Recevez les réponses par email pour valider avant publication, ou activez le mode automatique pour répondre sans intervention.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">04</div>
-      <h3>Votre réputation s'améliore</h3>
-      <p>Plus de réponses = meilleur classement local sur Google, plus de confiance client, plus de conversions.</p>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section style="background:var(--paper2); border-top:1px solid var(--paper3); border-bottom:1px solid var(--paper3); padding: 5rem 2rem;" id="pricing">
-  <div style="max-width:900px; margin:0 auto;">
-    <div class="section-label">Tarifs</div>
-    <h2 class="section-title">Clair, sans surprise</h2>
-    <p class="section-sub">Résiliez à tout moment. Aucun engagement.</p>
-    <div class="pricing-grid">
-
-      <div class="plan-card">
-        <div class="plan-name">Gratuit</div>
-        <div class="plan-price">0 €<span> /mois</span></div>
-        <div class="plan-desc">Pour tester et se convaincre.</div>
-        <ul class="plan-features">
-          <li>5 réponses générées / mois</li>
-          <li>1 établissement</li>
-          <li>Tous les tons disponibles</li>
-          <li class="muted">Mode automatique</li>
-          <li class="muted">Alertes email</li>
-          <li class="muted">Statistiques</li>
-        </ul>
-        <a href="#" class="plan-cta">Commencer gratuitement</a>
-      </div>
-
-      <div class="plan-card featured">
-        <div class="plan-badge">Le plus populaire</div>
-        <div class="plan-name">Pro</div>
-        <div class="plan-price">29 €<span> /mois</span></div>
-        <div class="plan-desc">Pour les établissements actifs.</div>
-        <ul class="plan-features">
-          <li>Réponses illimitées</li>
-          <li>Jusqu'à 3 établissements</li>
-          <li>Mode automatique inclus</li>
-          <li>Alertes email en temps réel</li>
-          <li>Statistiques de réputation</li>
-          <li class="muted">Support prioritaire</li>
-        </ul>
-        <a href="#" class="plan-cta primary">Essayer 14 jours gratuits</a>
-      </div>
-
-      <div class="plan-card">
-        <div class="plan-name">Multi-sites</div>
-        <div class="plan-price">79 €<span> /mois</span></div>
-        <div class="plan-desc">Pour les chaînes et franchises.</div>
-        <ul class="plan-features">
-          <li>Réponses illimitées</li>
-          <li>Établissements illimités</li>
-          <li>Mode automatique inclus</li>
-          <li>Alertes email en temps réel</li>
-          <li>Statistiques avancées</li>
-          <li>Support prioritaire</li>
-        </ul>
-        <a href="#" class="plan-cta">Nous contacter</a>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="section">
-  <div class="section-label">FAQ</div>
-  <h2 class="section-title">Questions fréquentes</h2>
-  <div class="faq-list">
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">Est-ce que les réponses générées respectent mes valeurs et mon ton ?</div>
-      <div class="faq-a">Oui. Réputia apprend de vos validations et s'adapte au fil des semaines. Vous pouvez aussi définir un guide de style personnalisé dans les paramètres pour que chaque réponse corresponde exactement à l'image de votre établissement.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">Mes réponses seront-elles publiées automatiquement sur Google ?</div>
-      <div class="faq-a">Vous choisissez. En mode Manuel, vous recevez chaque réponse par email et vous cliquez pour publier. En mode Automatique (disponible sur Pro), Réputia publie directement — mais vous pouvez toujours modifier ou supprimer dans les 30 minutes suivant la publication.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">Puis-je essayer avant de payer ?</div>
-      <div class="faq-a">Absolument. Le plan Gratuit vous permet de générer 5 réponses par mois sans engagement, sans carte bancaire. Le plan Pro inclut 14 jours d'essai gratuit avec accès à toutes les fonctionnalités.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">Est-ce que ça fonctionne pour TripAdvisor ou Booking ?</div>
-      <div class="faq-a">Pour l'instant Réputia se concentre sur Google Business Profile, qui représente 90% des avis consultés avant une visite en France. L'intégration TripAdvisor et Booking est prévue pour le T3 2026.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">Combien de temps ça prend à configurer ?</div>
-      <div class="faq-a">Moins de 5 minutes. Vous connectez votre compte Google Business, vous choisissez votre ton, et c'est prêt. Réputia commence à surveiller vos nouveaux avis immédiatement.</div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA FINAL -->
-<section style="background:var(--ink); color:var(--paper); text-align:center; padding:5rem 2rem;">
-  <h2 style="font-family:var(--font-display); font-size:clamp(1.8rem,4vw,2.8rem); letter-spacing:-0.02em; margin-bottom:1rem; color:#fff;">Votre réputation ne peut pas attendre.</h2>
-  <p style="color:rgba(255,255,255,0.6); max-width:480px; margin:0 auto 2rem; font-size:1rem;">Chaque avis sans réponse est une opportunité manquée. Commencez gratuitement dès aujourd'hui.</p>
-  <a href="#pricing" class="btn-primary" style="font-size:1rem; padding:15px 32px;">Démarrer gratuitement →</a>
-  <p style="margin-top:1rem; font-size:0.8rem; color:rgba(255,255,255,0.3);">Aucune carte bancaire · Installation en 5 minutes · Résiliation libre</p>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <p>© 2026 Réputia · <a href="#">Mentions légales</a> · <a href="#">Confidentialité</a> · <a href="#">Contact</a></p>
-</footer>
-
-<script>
-const EXAMPLES = [
-  {
-    init: 'MR', name: 'Marie Renard', stars: '★★★★★', rating: 5,
-    text: 'Accueil exceptionnel, plats délicieux et service rapide. Je recommande chaudement ce restaurant, on y reviendra très bientôt !'
-  },
-  {
-    init: 'TL', name: 'Thomas L.', stars: '★★★☆☆', rating: 3,
-    text: 'Bonne cuisine mais le service était un peu lent ce soir-là. L\'ambiance est agréable, les prix corrects. On peut faire mieux sur les délais d\'attente.'
-  },
-  {
-    init: 'SP', name: 'Sophie P.', stars: '★☆☆☆☆', rating: 1,
-    text: 'Très déçue. Nous avons attendu 45 minutes sans être servis. Quand on a demandé à partir, personne ne s\'est excusé. Je ne reviendrai pas.'
-  }
-];
-
-let currentExample = 0;
-let currentTone = 'professionnel et chaleureux';
-
-function loadExample(i) {
-  currentExample = i;
-  const e = EXAMPLES[i];
-  document.getElementById('av').textContent = e.init;
-  document.getElementById('rev-name').textContent = e.name;
-  document.getElementById('rev-stars').textContent = e.stars;
-  document.getElementById('rev-text').textContent = e.text;
-  document.querySelectorAll('#examples .tone-pill').forEach((b,j) => b.classList.toggle('active', j===i));
-  document.getElementById('response-area').classList.remove('visible');
-}
-
-document.querySelectorAll('#tones .tone-pill').forEach(btn => {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('#tones .tone-pill').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-    currentTone = this.dataset.tone;
-  });
-});
-
-async function generateResponse() {
-  const btn = document.getElementById('gen-btn');
-  const btnText = document.getElementById('btn-text');
-  const responseArea = document.getElementById('response-area');
-  const responseText = document.getElementById('response-text');
-
-  const bizName = document.getElementById('biz-name').value || 'notre établissement';
-  const bizType = document.getElementById('biz-type').value;
-  const review = EXAMPLES[currentExample];
-
-  btn.disabled = true;
-  btnText.innerHTML = '<span class="spinner"></span> Génération en cours…';
-  responseArea.classList.remove('visible');
-
-  const prompt = `Tu es le gérant de "${bizName}", un ${bizType} français.
-Tu dois répondre à cet avis Google (${review.rating} étoile${review.rating > 1 ? 's' : ''}) de ${review.name} :
-"${review.text}"
-
-Rédige une réponse ${currentTone}, courte (2-4 phrases max), naturelle, personnalisée, qui ne soit pas un copié-collé générique.
-Si l'avis est négatif, empathie + solution ou invitation à en parler directement.
-Si positif, remerciement sincère + petite touche personnelle.
-Réponds UNIQUEMENT avec le texte de la réponse, sans guillemets ni introduction.`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const data = await res.json();
-    const text = data.content?.map(c => c.text || '').join('') || 'Erreur de génération.';
-
-    responseText.textContent = '';
-    responseArea.classList.add('visible');
-    let i = 0;
-    responseText.classList.add('typing');
-    const interval = setInterval(() => {
-      responseText.textContent += text[i];
-      i++;
-      if (i >= text.length) {
-        clearInterval(interval);
-        responseText.classList.remove('typing');
-      }
-    }, 18);
-  } catch(err) {
-    responseText.textContent = 'Erreur de connexion. Vérifiez votre réseau.';
-    responseArea.classList.add('visible');
-  }
-
-  btn.disabled = false;
-  btnText.textContent = '✦ Générer la réponse par IA';
-}
-
-function copyResponse() {
-  const text = document.getElementById('response-text').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('copy-btn');
-    btn.textContent = '✓ Copié !';
-    btn.classList.add('copy-done');
-    setTimeout(() => { btn.textContent = '📋 Copier'; btn.classList.remove('copy-done'); }, 2000);
-  });
-}
-
-function toggleFaq(el) {
-  const item = el.parentElement;
-  const wasOpen = item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-  if (!wasOpen) item.classList.add('open');
-}
-</script>
-</body>
-</html>
+<footer><p>© 2026 Réputia · <a href="/">Accueil</a> · <a href="/blog">Blog</a> · <a href="mailto:contact@reputia.fr">Contact</a></p></footer>
+</body></html>
