@@ -891,7 +891,7 @@ Réponds UNIQUEMENT avec le texte de la réponse, sans guillemets ni introductio
     const res = await fetch('/api/generate', {
       method: 'POST',
       headers,
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
     });
 
     if (res.status === 403) {
