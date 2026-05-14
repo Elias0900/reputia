@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide de déploiement — Réputia</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0f0e0c; --ink2: #3d3b35; --ink3: #7a7770;
+    --paper: #faf8f4; --paper2: #f0ede6; --paper3: #e5e0d6;
+    --accent: #2a6e4e; --accent2: #1d5038; --accent-light: #e8f3ed;
+    --gold: #c4922a; --gold-light: #fdf5e6;
+    --danger-light: #fef2f2; --danger: #c0392b;
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'Courier New', monospace;
+  }
+  body { font-family: var(--font-body); background: var(--paper); color: var(--ink); line-height: 1.6; }
+
+  .page { max-width: 780px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+
+  .logo { font-family: var(--font-display); font-size: 1.4rem; color: var(--ink); margin-bottom: 2.5rem; display: inline-block; }
+  .logo span { color: var(--accent); }
+
+  h1 { font-family: var(--font-display); font-size: 2.4rem; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+  .subtitle { font-size: 1rem; color: var(--ink2); margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--paper3); }
+
+  /* Progress bar */
+  .progress-bar {
+    display: flex; gap: 0; margin-bottom: 3rem;
+    border: 1px solid var(--paper3); border-radius: 10px; overflow: hidden;
+  }
+  .progress-step {
+    flex: 1; padding: 10px 8px; text-align: center;
+    font-size: 0.75rem; font-weight: 500; color: var(--ink3);
+    background: var(--paper2); border-right: 1px solid var(--paper3);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .progress-step:last-child { border-right: none; }
+  .progress-step.done { background: var(--accent-light); color: var(--accent); }
+  .progress-step.active { background: var(--accent); color: #fff; }
+  .progress-step .check { display: none; }
+  .progress-step.done .check { display: inline; margin-right: 4px; }
+
+  /* Phase blocks */
+  .phase { margin-bottom: 3rem; }
+  .phase-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;
+  }
+  .phase-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 600; flex-shrink: 0;
+  }
+  .phase-num.done { background: var(--accent); }
+  .phase-title { font-size: 1.2rem; font-weight: 600; }
+  .phase-badge {
+    font-size: 0.72rem; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; letter-spacing: 0.06em;
+  }
+  .badge-free { background: var(--accent-light); color: var(--accent); }
+  .badge-paid { background: var(--gold-light); color: var(--gold); }
+  .badge-time { background: var(--paper2); color: var(--ink3); border: 1px solid var(--paper3); }
+
+  /* Steps inside phase */
+  .steps-list { display: flex; flex-direction: column; gap: 12px; }
+  .step-item {
+    background: var(--paper);
+    border: 1px solid var(--paper3);
+    border-radius: 10px; overflow: hidden;
+  }
+  .step-item-header {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 16px; cursor: pointer;
+  }
+  .step-checkbox {
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 2px solid var(--paper3);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .step-checkbox.checked { background: var(--accent); border-color: var(--accent); }
+  .step-checkbox.checked::after { content: '✓'; color: #fff; font-size: 0.75rem; font-weight: 700; }
+  .step-item.checked { border-color: #b8dcc9; background: #f8fdf9; }
+  .step-item.checked .step-title { text-decoration: line-through; color: var(--ink3); }
+
+  .step-content { flex: 1; }
+  .step-title { font-size: 0.95rem; font-weight: 500; margin-bottom: 2px; }
+  .step-desc { font-size: 0.82rem; color: var(--ink3); }
+  .step-body {
+    padding: 0 16px 16px 50px;
+    font-size: 0.875rem; color: var(--ink2); line-height: 1.65;
+    display: none;
+  }
+  .step-body.open { display: block; }
+
+  code {
+    font-family: var(--font-mono);
+    background: var(--ink); color: #a8e6c8;
+    padding: 2px 8px; border-radius: 5px; font-size: 0.82rem;
+  }
+  .code-block {
+    font-family: var(--font-mono);
+    background: var(--ink); color: #a8e6c8;
+    padding: 14px 16px; border-radius: 8px;
+    font-size: 0.82rem; line-height: 1.7;
+    margin: 10px 0; white-space: pre-wrap; overflow-x: auto;
+  }
+  .code-block .comment { color: rgba(255,255,255,0.3); }
+  .code-block .keyword { color: #f9c66b; }
+  .copy-btn {
+    font-family: var(--font-body);
+    font-size: 0.75rem; padding: 5px 12px;
+    border: 1px solid var(--paper3); border-radius: 6px;
+    background: var(--paper2); color: var(--ink2);
+    cursor: pointer; margin-top: 6px;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .info-box {
+    background: var(--accent-light); border: 1px solid #b8dcc9;
+    border-radius: 8px; padding: 12px 14px; margin: 10px 0;
+    font-size: 0.85rem; color: var(--accent2);
+  }
+  .warn-box {
+    background: var(--gold-light); border: 1px solid #e8d5a3;
+    border-radius: 8px; padding: 12px 14px; margin: 10px 0;
+    font-size: 0.85rem; color: #8a620c;
+  }
+  .link-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent); color: #fff;
+    padding: 9px 18px; border-radius: 7px;
+    font-size: 0.85rem; font-weight: 500;
+    text-decoration: none; margin-top: 8px;
+    transition: background 0.15s;
+  }
+  .link-btn:hover { background: var(--accent2); }
+  .link-btn-ghost {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1.5px solid var(--paper3);
+    color: var(--ink2); padding: 8px 16px;
+    border-radius: 7px; font-size: 0.85rem;
+    text-decoration: none; margin-top: 8px;
+    transition: all 0.15s;
+  }
+  .link-btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Final checklist */
+  .final-box {
+    background: var(--ink); color: var(--paper);
+    border-radius: 14px; padding: 2rem; margin-top: 3rem;
+  }
+  .final-box h3 { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 1.25rem; }
+  .check-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; font-size: 0.875rem; }
+  .check-row::before { content: '✓'; color: #5dcaa5; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .check-row.pending::before { content: '○'; color: rgba(255,255,255,0.3); }
+
+  .divider { border: none; border-top: 1px solid var(--paper3); margin: 2.5rem 0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="logo">Réput<span>ia</span> <span style="font-family:var(--font-body);font-size:0.75rem;color:var(--ink3);font-weight:400;margin-left:8px;">· Guide de déploiement</span></div>
+
+  <h1>Mise en ligne de Réputia</h1>
+  <p class="subtitle">3 phases · ~30 minutes au total · Aucune compétence technique requise</p>
+
+  <div class="progress-bar">
+    <div class="progress-step active" id="p1"><span class="check">✓</span>1. Vercel</div>
+    <div class="progress-step" id="p2"><span class="check">✓</span>2. Domaine</div>
+    <div class="progress-step" id="p3"><span class="check">✓</span>3. DNS</div>
+    <div class="progress-step" id="p4"><span class="check">✓</span>4. Analytics</div>
+    <div class="progress-step" id="p5"><span class="check">✓</span>5. Checklist</div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num">1</div>
+      <span class="phase-title">Déployer sur Vercel</span>
+      <span class="phase-badge badge-free">Gratuit</span>
+      <span class="phase-badge badge-time">⏱ 10 min</span>
+    </div>
+    <div class="steps-list">
+
+      <div class="step-item" id="s1">
+        <div class="step-item-header" onclick="toggleStep('s1')">
+          <div class="step-checkbox" id="c-s1" onclick="event.stopPropagation(); checkStep('s1')"></div>
+          <div class="step-content">
+            <div class="step-title">Créer un compte Vercel gratuit</div>
+            <div class="step-desc">Connexion avec GitHub recommandée (facilite les déploiements futurs)</div>
+          </div>
+        </div>
+        <div class="step-body" id="b-s1">
+          <a href="https://vercel.com/signup" target="_blank" class="link-btn">→ Ouvrir vercel.com/signup</a>
+          <div class="info-box" style="margin-top:12px;">💡 Clique sur <strong>"Continue with GitHub"</strong> — c'est la méthode la plus rapide et elle te permettra de déployer automatiquement à chaque modification future.</div>
+          <p style="margin-top:10px;">Si tu n'as pas GitHub, <a href="https://github.com/signup" target="_blank" style="color:var(--accent);">crée un compte en 2 minutes</a> d'abord (gratuit).</p>
+        </div>
+      </div>
+
+      <div class="step-item" id="s2">
+        <div class="step-item-header" onclick="toggleStep('s2')">
+          <div class="step-checkbox" id="c-s2" onclick="event.stopPropagation(); checkStep('s2')"></div>
+          <div class="step-content">
+            <div class="step-title">Créer un repository GitHub "reputia"</div>
+            <div class="step-desc">C'est là que tu déposeras les fichiers du site</div>
+          </div>
+        </div>
+        <div class="step-body" id="b-s2">
+          <a href="https://github.com/new" target="_blank" class="link-btn">→ Créer le repository</a>
+          <p style="margin-top: 12px;">Paramètres recommandés :</p>
+          <ul style="margin:8px 0 0 16px; font-size:0.875rem; color:var(--ink2); line-height:2;">
+            <li>Repository name : <code>reputia</code></li>
+            <li>Visibility : <strong>Private</strong> (ton code reste privé)</li>
+            <li>Cocher "Add a README file"</li>
+            <li>Cliquer <strong>"Create repository"</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-item" id="s3">
+        <div class="step-item-header" onclick="toggleStep('s3')">
+          <div class="step-checkbox" id="c-s3" onclick="event.stopPropagation(); checkStep('s3')"></div>
+          <div class="step-content">
+            <div class="step-title">Uploader les fichiers du site</div>
+            <div class="step-desc">index.html, vercel.json, robots.txt, sitemap.xml, 404.html</div>
+          </div>
+        </div>
+        <div class="step-body" id="b-s3">
+          <p style="margin-bottom:10px;">Dans ton repository GitHub, clique sur <strong>"uploading an existing file"</strong> (ou le bouton <strong>"Add file" → "Upload files"</strong>).</p>
+          <p>Glisse-dépose les 5 fichiers fournis dans le ZIP :</p>
+          <div class="code-block"><span class="comment"># Fichiers à uploader dans GitHub</span>
+reputia/
+├── index.html        <span class="comment"># Le site complet</span>
+├── vercel.json       <span class="comment"># Config déploiement</span>
+├── robots.txt        <span class="comment"># Instructions pour Google</span>
+├── sitemap.xml       <span class="comment"># Plan du site</span>
+└── 404.html          <span class="comment"># Page erreur</span></div>
+          <p style="margin-top:10px;">Clique <strong>"Commit changes"</strong> pour valider l'upload.</p>
+        </div>
+      </div>
+
+      <div class="step-item" id="s4">
+        <div class="step-item-header" onclick="toggleStep('s4')">
+          <div class="step-checkbox" id="c-s4" onclick="event.stopPropagation(); checkStep('s4')"></div>
+          <div class="step-content">
+            <div class="step-title">Importer le projet dans Vercel</div>
+            <div class="step-desc">Vercel détecte automatiquement la config et déploie</div>
+          </div>
+        </div>
+        <div class="step-body" id="b-s4">
+          <a href="https://vercel.com/new" target="_blank" class="link-btn">→ Nouveau projet Vercel</a>
+          <ol style="margin:12px 0 0 16px; font-size:0.875rem; color:var(--ink2); line-height:2.2;">
+            <li>Clique <strong>"Import Git Repository"</strong></li>
+            <li>Sélectionne ton repo <code>reputia</code></li>
+            <li>Laisse tous les paramètres par défaut</li>
+            <li>Clique <strong>"Deploy"</strong></li>
+          </ol>
+          <div class="info-box" style="margin-top:12px;">🚀 En 30 secondes, ton site est live sur une URL du type <code>reputia-xyz.vercel.app</code>. Tu peux déjà le partager et le tester !</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PHASE 2 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num">2</div>
+      <span class="phase-title">Acheter le domaine</span>
+      <span class="phase-badge badge-paid">~10 €/an</span>
+      <span class="phase-badge badge-time">⏱ 5 min</span>
+    </div>
+    <div class="steps-list">
+
+      <div class="step-item" id="s5">
+        <div class="step-item-header" onclick="toggleStep('s5')">
+          <div class="step-checkbox" id="c-s5" onclick="event.stopPropagation(); checkStep('s5')"></div>
+          <div class="step-content">
+            <div class="step-title">Choisir et acheter le domaine</div>
+            <div class="step-desc">Recommandé : reputia.fr ou reputia.io</div>
+          </div>
+        </div>
+        <div class="step-body" id="b-s5">
+          <p style="margin-bottom:12px;">Vérifie la disponibilité et achète directement :</p>
+          <a href="https://www.ovhcloud.com/fr/domains/" target="_blank" class="link-btn">→ OVH (recommandé · FR)</a>
+          <a href="https://www.namecheap.com" target="_blank" class="link-btn-ghost" style="margin-left:8px;">Namecheap (international)</a>
+          <div class="warn-box" style="margin-top:12px;">⚠️ <strong>Préfère le .fr</strong> pour cibler la France — meilleur SEO local. Si reputia.fr est pris, essaie <code>reputia.io</code>, <code>reputia.app</code> ou <code>app-reputia.fr</code>.</div>
+          <p style="margin-top:10px; font-size:0.82rem; color:var(--ink3);">Prix indicatif : .fr ≈ 7€/an · .io ≈ 35€/an · .app ≈ 15€/an</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PHASE 3 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num">3</div>
+      <span class="phase-title">Connecter le domaine à Vercel (DNS)</span>
+      <span class="phase-badge badge-free">Gratuit</span>
+      <span class="phase-badge badge-time">⏱ 10 min + propagation</span>
+    </div>
+    <div class="steps-list">
+
+      <div class="step-item" id="s6">
+        <div class="step-item-header" onclick="toggleStep('s6')">
+          <div class="step-checkbox" id="c-s6" onclick="event.stopPropagation(); checkStep('s6')"></div>
+          <div class="step-content">
+            <div class="step-title">Ajouter le domaine dans Vercel</div>
+            <div class="step-desc">Vercel génère les enregistrements DNS à copier</div>
+          </div>
+        </div>
+        <div class="step-body" id="b-s6">
+          <ol style="margin:0 0 12px 16px; font-size:0.875rem; color:var(--ink2); line-height:2.2;">
+            <li>Dans Vercel, ouvre ton projet <code>reputia</code></li>
+            <li>Va dans <strong>Settings → Domains</strong></li>
+            <li>Entre <code>reputia.fr</code> → <strong>"Add"</strong></li>
+            <li>Vercel t'affiche 2 enregistrements DNS à copier</li>
+          </ol>
+          <p>Tu verras quelque chose comme :</p>
+          <div class="code-block"><span class="comment"># Enregistrements DNS fournis par Vercel</span>
+<span class="keyword">Type A    :</span>  @    →  76.76.21.21
+<span class="keyword">Type CNAME:</span>  www  →  cname.vercel-dns.com</div>
+        </div>
+      </div>
+
+      <div class="step-item" id="s7">
+        <div class="step-item-header" onclick="toggleStep('s7')">
+          <div class="step-checkbox" id="c-s7" onclick="event.stopPropagation(); checkStep('s7')"></div>
+          <div class="step-content">
+            <div class="step-title">Coller les DNS chez OVH (ou ton registrar)</div>
+            <div class="step-desc">Dans la zone DNS de ton domaine</div>
+          </div>
+        </div>
+        <div class="step-body" id="b-s7">
+          <p style="margin-bottom:10px;"><strong>Chez OVH :</strong></p>
+          <ol style="margin:0 0 12px 16px; font-size:0.875rem; color:var(--ink2); line-height:2.2;">
+            <li>Va dans <strong>Web Cloud → Domaines → Zone DNS</strong></li>
+            <li>Clique <strong>"Ajouter une entrée"</strong></li>
+            <li>Ajoute l'entrée <strong>A</strong> : cible <code>76.76.21.21</code></li>
+            <li>Ajoute l'entrée <strong>CNAME</strong> : sous-domaine <code>www</code>, cible <code>cname.vercel-dns.com</code></li>
+            <li>Valide</li>
+          </ol>
+          <div class="info-box">⏳ La propagation DNS prend <strong>5 à 30 minutes</strong> en général (jusqu'à 48h max). Vercel affiche un ✓ vert quand c'est actif. Le certificat HTTPS est généré automatiquement — rien à faire.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PHASE 4 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num">4</div>
+      <span class="phase-title">Brancher les analytics</span>
+      <span class="phase-badge badge-free">Gratuit</span>
+      <span class="phase-badge badge-time">⏱ 5 min</span>
+    </div>
+    <div class="steps-list">
+
+      <div class="step-item" id="s8">
+        <div class="step-item-header" onclick="toggleStep('s8')">
+          <div class="step-checkbox" id="c-s8" onclick="event.stopPropagation(); checkStep('s8')"></div>
+          <div class="step-content">
+            <div class="step-title">Activer Vercel Analytics (inclus gratuit)</div>
+            <div class="step-desc">Pour voir tes visiteurs sans RGPD complexe</div>
+          </div>
+        </div>
+        <div class="step-body" id="b-s8">
+          <ol style="margin:0 0 12px 16px; font-size:0.875rem; color:var(--ink2); line-height:2.2;">
+            <li>Dans ton projet Vercel → onglet <strong>"Analytics"</strong></li>
+            <li>Clique <strong>"Enable Analytics"</strong></li>
+            <li>C'est tout — les stats apparaissent automatiquement</li>
+          </ol>
+          <div class="info-box">📊 Tu verras : nombre de visiteurs, pages vues, pays, sources de trafic — sans cookie banner obligatoire (privacy-first by design).</div>
+          <p style="margin-top:10px; font-size:0.82rem; color:var(--ink3);">Optionnel : ajoute aussi <a href="https://search.google.com/search-console" target="_blank" style="color:var(--accent);">Google Search Console</a> (gratuit) pour suivre ton référencement.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FINAL CHECKLIST -->
+  <div class="final-box">
+    <h3>Checklist de mise en ligne ✦</h3>
+    <div class="check-row">Site déployé sur Vercel (URL .vercel.app active)</div>
+    <div class="check-row">Domaine acheté (reputia.fr ou équivalent)</div>
+    <div class="check-row">DNS configurés chez le registrar</div>
+    <div class="check-row">HTTPS automatique Vercel actif (cadenas vert)</div>
+    <div class="check-row">Analytics Vercel activés</div>
+    <div class="check-row pending">Google Search Console configurée</div>
+    <div class="check-row pending">Intégration Stripe (étape suivante)</div>
+    <div class="check-row pending">Articles SEO publiés (étape finale)</div>
+
+    <p style="margin-top:1.5rem; font-size:0.85rem; color:rgba(255,255,255,0.5);">Prochaine étape : intégration Stripe pour encaisser les abonnements.</p>
+  </div>
+
+  <!-- FOOTER NOTE -->
+  <p style="margin-top:2rem; font-size:0.8rem; color:var(--ink3); text-align:center;">
+    Guide généré le 14 mai 2026 · Réputia MVP v1.0
+  </p>
+
+</div>
+
+<script>
+function toggleStep(id) {
+  const body = document.getElementById('b-' + id);
+  body.classList.toggle('open');
+}
+
+function checkStep(id) {
+  const item = document.getElementById(id);
+  const cb = document.getElementById('c-' + id);
+  const isChecked = cb.classList.toggle('checked');
+  item.classList.toggle('checked', isChecked);
+  updateProgress();
+}
+
+function updateProgress() {
+  const steps = ['s1','s2','s3','s4','s5','s6','s7','s8'];
+  const phases = [
+    { pid:'p1', steps:['s1','s2','s3','s4'] },
+    { pid:'p2', steps:['s5'] },
+    { pid:'p3', steps:['s6','s7'] },
+    { pid:'p4', steps:['s8'] },
+  ];
+  const totalDone = steps.filter(s => document.getElementById('c-'+s).classList.contains('checked')).length;
+
+  phases.forEach(phase => {
+    const allDone = phase.steps.every(s => document.getElementById('c-'+s).classList.contains('checked'));
+    const someDone = phase.steps.some(s => document.getElementById('c-'+s).classList.contains('checked'));
+    const el = document.getElementById(phase.pid);
+    el.classList.remove('done','active');
+    if (allDone) el.classList.add('done');
+    else if (someDone) el.classList.add('active');
+  });
+
+  const p5 = document.getElementById('p5');
+  p5.classList.remove('done','active');
+  if (totalDone === steps.length) p5.classList.add('done');
+  else if (totalDone > 0) p5.classList.add('active');
+}
+
+document.querySelectorAll('.step-item-header').forEach(header => {
+  header.addEventListener('click', function() {
+    const id = this.parentElement.id;
+    if (id) toggleStep(id);
+  });
+});
+</script>
+</body>
+</html>
