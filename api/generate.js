@@ -1,10 +1,53 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
+
+const MAX_FREE_TRIALS = 3;
+
+async function getUserFromToken(token) {
+  if (!token) return null;
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data.user) return null;
+  return data.user;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.replace('Bearer ', '');
+  const user = await getUserFromToken(token);
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile) return res.status(403).json({ error: 'Profil introuvable.' });
+
+    if (profile.plan === 'free') {
+      if (profile.trials_used >= MAX_FREE_TRIALS) {
+        return res.status(403).json({
+          error: 'limit_reached',
+          message: 'Limite gratuite atteinte. Passez au plan Pro.',
+          trials_used: profile.trials_used
+        });
+      }
+      await supabase
+        .from('profiles')
+        .update({ trials_used: profile.trials_used + 1 })
+        .eq('id', user.id);
+    }
+  }
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -18,10 +61,18 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    return res.status(response.status).json(data);
 
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('plan, trials_used')
+        .eq('id', user.id)
+        .single();
+      data._profile = profile;
+    }
+
+    return res.status(response.status).json(data);
   } catch (error) {
-    console.error('Anthropic proxy error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
