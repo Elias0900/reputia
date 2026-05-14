@@ -503,7 +503,7 @@
           <li class="muted">Alertes email</li>
           <li class="muted">Statistiques</li>
         </ul>
-        <a href="#" class="plan-cta">Commencer gratuitement</a>
+        <button onclick="scrollToDemo()" class="plan-cta">Commencer gratuitement</button>
       </div>
 
       <div class="plan-card featured">
@@ -519,7 +519,7 @@
           <li>Statistiques de réputation</li>
           <li class="muted">Support prioritaire</li>
         </ul>
-        <a href="#" class="plan-cta primary">Essayer 14 jours gratuits</a>
+        <button onclick="checkout('pro')" id="btn-pro" class="plan-cta primary">Essayer 14 jours gratuits</button>
       </div>
 
       <div class="plan-card">
@@ -534,7 +534,7 @@
           <li>Statistiques avancées</li>
           <li>Support prioritaire</li>
         </ul>
-        <a href="#" class="plan-cta">Nous contacter</a>
+        <button onclick="checkout('multisites')" id="btn-multisites" class="plan-cta">S'abonner</button>
       </div>
 
     </div>
@@ -644,7 +644,7 @@ Si positif, remerciement sincère + petite touche personnelle.
 Réponds UNIQUEMENT avec le texte de la réponse, sans guillemets ni introduction.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -692,6 +692,35 @@ function toggleFaq(el) {
   const wasOpen = item.classList.contains('open');
   document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
   if (!wasOpen) item.classList.add('open');
+}
+
+function scrollToDemo() {
+  document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function checkout(plan) {
+  const btn = document.getElementById('btn-' + plan);
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⏳ Chargement…';
+
+  try {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Erreur inconnue');
+    }
+  } catch (err) {
+    alert('Une erreur est survenue : ' + err.message + '\nRéessayez dans quelques instants.');
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
 }
 </script>
 </body>
