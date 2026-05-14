@@ -325,6 +325,53 @@
   }
   footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
 
+  /* ─── AUTH MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(15,14,12,0.7); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--paper); border-radius: 16px;
+    padding: 2rem; width: 100%; max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    transform: translateY(16px); transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal h2 { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+  .modal p.sub { font-size: 0.875rem; color: var(--ink3); margin-bottom: 1.5rem; }
+  .modal input {
+    width: 100%; padding: 10px 14px; margin-bottom: 10px;
+    border: 1.5px solid var(--paper3); border-radius: 8px;
+    font-family: var(--font-body); font-size: 0.9rem; color: var(--ink);
+    background: var(--paper2); outline: none; transition: border-color 0.15s;
+  }
+  .modal input:focus { border-color: var(--accent); }
+  .modal-btn {
+    width: 100%; padding: 12px; background: var(--accent); color: #fff;
+    border: none; border-radius: 8px; font-family: var(--font-body);
+    font-size: 0.95rem; font-weight: 500; cursor: pointer;
+    transition: background 0.15s; margin-top: 4px;
+  }
+  .modal-btn:hover { background: var(--accent2); }
+  .modal-btn:disabled { background: var(--ink3); cursor: not-allowed; }
+  .modal-error { font-size: 0.82rem; color: #c0392b; margin-bottom: 8px; display: none; }
+  .modal-switch { font-size: 0.82rem; color: var(--ink3); text-align: center; margin-top: 1rem; }
+  .modal-switch a { color: var(--accent); cursor: pointer; text-decoration: underline; }
+  .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--ink3); }
+
+  /* ─── NAV USER ─── */
+  .nav-user { display: flex; align-items: center; gap: 10px; }
+  .nav-user .plan-badge {
+    font-size: 0.72rem; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .plan-badge.free { background: var(--paper2); color: var(--ink3); border: 1px solid var(--paper3); }
+  .plan-badge.pro { background: var(--accent-light); color: var(--accent); }
+
   /* ─── ANIMATIONS ─── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -357,9 +404,33 @@
     <a href="#demo">Démo</a>
     <a href="#how">Comment ça marche</a>
     <a href="#pricing">Tarifs</a>
-    <a class="btn-nav" href="#pricing">Essai gratuit</a>
+    <div class="nav-user" id="nav-auth">
+      <a class="btn-nav" onclick="openModal('login')" style="cursor:pointer;background:transparent;color:var(--ink2);border:1.5px solid var(--paper3);padding:7px 16px;">Connexion</a>
+      <a class="btn-nav" onclick="openModal('signup')" style="cursor:pointer;">Essai gratuit</a>
+    </div>
+    <div class="nav-user" id="nav-user" style="display:none;">
+      <span class="plan-badge free" id="nav-plan-badge">Gratuit</span>
+      <span style="font-size:0.82rem;color:var(--ink2);" id="nav-email"></span>
+      <a onclick="logout()" style="font-size:0.82rem;color:var(--ink3);cursor:pointer;text-decoration:underline;">Déconnexion</a>
+    </div>
   </div>
 </nav>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="modal-title">Créer un compte</h2>
+    <p class="sub" id="modal-sub">Gratuit · 3 réponses offertes pour tester</p>
+    <div class="modal-error" id="modal-error"></div>
+    <input type="email" id="auth-email" placeholder="Votre email" autocomplete="email">
+    <input type="password" id="auth-password" placeholder="Mot de passe (min. 6 caractères)" autocomplete="new-password">
+    <button class="modal-btn" id="modal-submit" onclick="submitAuth()">Créer mon compte gratuit</button>
+    <div class="modal-switch" id="modal-switch">
+      Déjà un compte ? <a onclick="toggleModal()">Se connecter</a>
+    </div>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -435,6 +506,15 @@
           <button class="tone-pill" data-tone="sobre et élégant">Élégant</button>
         </div>
 
+        <div id="trial-counter" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span style="font-size:0.78rem;color:var(--ink3);">Essais gratuits restants : <strong id="trial-count" style="color:var(--accent);">3</strong> / 3</span>
+          <div style="display:flex;gap:4px;" id="trial-dots">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;" class="trial-dot"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;" class="trial-dot"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;" class="trial-dot"></span>
+          </div>
+        </div>
+
         <button class="generate-btn" id="gen-btn" onclick="generateResponse()">
           <span id="btn-text">✦ Générer la réponse par IA</span>
         </button>
@@ -444,9 +524,17 @@
           <div class="response-text" id="response-text"></div>
           <div class="response-actions">
             <button class="btn-small" id="copy-btn" onclick="copyResponse()">📋 Copier</button>
-            <button class="btn-small" onclick="generateResponse()">↺ Régénérer</button>
-            <button class="btn-small" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">🚀 Utiliser sur mes vrais avis</button>
+            <button class="btn-small" onclick="generateResponse()">&#8634; Régénérer</button>
+            <button class="btn-small" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Utiliser sur mes vrais avis</button>
           </div>
+        </div>
+
+        <div id="paywall" style="display:none;background:var(--ink);border-radius:12px;padding:1.5rem;text-align:center;margin-top:12px;">
+          <p style="color:rgba(255,255,255,0.5);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;">Essais gratuits épuisés</p>
+          <p style="font-family:var(--font-display);font-size:1.3rem;color:#fff;margin-bottom:0.5rem;">Vous avez adoré ? Passez au Pro.</p>
+          <p style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:1.25rem;">Réponses illimitées · 3 établissements · 14 jours gratuits</p>
+          <button onclick="checkout('pro')" style="background:var(--accent);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-family:var(--font-body);font-size:0.95rem;font-weight:500;cursor:pointer;width:100%;">Essayer 14 jours gratuits — 29/mois</button>
+          <p style="font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:0.75rem;">Sans engagement · Résiliation libre</p>
         </div>
 
       </div>
@@ -583,23 +671,165 @@
 </footer>
 
 <script>
-const EXAMPLES = [
-  {
-    init: 'MR', name: 'Marie Renard', stars: '★★★★★', rating: 5,
-    text: 'Accueil exceptionnel, plats délicieux et service rapide. Je recommande chaudement ce restaurant, on y reviendra très bientôt !'
-  },
-  {
-    init: 'TL', name: 'Thomas L.', stars: '★★★☆☆', rating: 3,
-    text: 'Bonne cuisine mais le service était un peu lent ce soir-là. L\'ambiance est agréable, les prix corrects. On peut faire mieux sur les délais d\'attente.'
-  },
-  {
-    init: 'SP', name: 'Sophie P.', stars: '★☆☆☆☆', rating: 1,
-    text: 'Très déçue. Nous avons attendu 45 minutes sans être servis. Quand on a demandé à partir, personne ne s\'est excusé. Je ne reviendrai pas.'
-  }
-];
 
+const MAX_TRIALS = 3;
+let authToken = localStorage.getItem('reputia_token') || null;
+let currentUser = null;
+let modalMode = 'signup';
+
+// ─── AUTH ───
+async function initAuth() {
+  if (!authToken) { updateTrialUI(getLocalTrials()); return; }
+  try {
+    const res = await fetch('/api/me', {
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+    if (!res.ok) { logout(true); return; }
+    const data = await res.json();
+    currentUser = data.user;
+    showUserNav();
+    updateTrialUI(currentUser.plan === 'pro' ? Infinity : MAX_TRIALS - (currentUser.trials_used || 0));
+  } catch(e) { updateTrialUI(getLocalTrials()); }
+}
+
+function showUserNav() {
+  document.getElementById('nav-auth').style.display = 'none';
+  document.getElementById('nav-user').style.display = 'flex';
+  document.getElementById('nav-email').textContent = currentUser.email;
+  const badge = document.getElementById('nav-plan-badge');
+  badge.textContent = currentUser.plan === 'pro' ? 'Pro ✦' : 'Gratuit';
+  badge.className = 'plan-badge ' + currentUser.plan;
+}
+
+function logout(silent) {
+  authToken = null; currentUser = null;
+  localStorage.removeItem('reputia_token');
+  document.getElementById('nav-auth').style.display = 'flex';
+  document.getElementById('nav-user').style.display = 'none';
+  if (!silent) location.reload();
+}
+
+function openModal(mode) {
+  modalMode = mode || 'signup';
+  updateModalMode();
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('auth-email').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-error').style.display = 'none';
+  document.getElementById('auth-email').value = '';
+  document.getElementById('auth-password').value = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function toggleModal() {
+  modalMode = modalMode === 'signup' ? 'login' : 'signup';
+  updateModalMode();
+}
+
+function updateModalMode() {
+  const isSignup = modalMode === 'signup';
+  document.getElementById('modal-title').textContent = isSignup ? 'Créer un compte' : 'Connexion';
+  document.getElementById('modal-sub').textContent = isSignup ? 'Gratuit · 3 réponses offertes pour tester' : 'Bon retour parmi nous';
+  document.getElementById('modal-submit').textContent = isSignup ? 'Créer mon compte gratuit' : 'Se connecter';
+  document.getElementById('modal-switch').innerHTML = isSignup
+    ? 'Déjà un compte ? <a onclick="toggleModal()">Se connecter</a>'
+    : 'Pas encore de compte ? <a onclick="toggleModal()">S\'inscrire gratuitement</a>';
+}
+
+async function submitAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const errEl = document.getElementById('modal-error');
+  const btn = document.getElementById('modal-submit');
+
+  errEl.style.display = 'none';
+  if (!email || !password) { errEl.textContent = 'Remplissez tous les champs.'; errEl.style.display = 'block'; return; }
+  if (password.length < 6) { errEl.textContent = 'Mot de passe trop court (6 caractères min).'; errEl.style.display = 'block'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Chargement…';
+
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, action: modalMode })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('reputia_token', authToken);
+    closeModal();
+    showUserNav();
+    updateTrialUI(currentUser.plan === 'pro' ? Infinity : MAX_TRIALS - (currentUser.trials_used || 0));
+  } catch(e) {
+    errEl.textContent = e.message || 'Une erreur est survenue.';
+    errEl.style.display = 'block';
+  }
+
+  btn.disabled = false;
+  btn.textContent = modalMode === 'signup' ? 'Créer mon compte gratuit' : 'Se connecter';
+}
+
+// Soumettre avec Entrée
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('modal-overlay').classList.contains('open')) {
+    submitAuth();
+  }
+});
+
+// ─── TRIALS ───
+function getLocalTrials() {
+  return parseInt(localStorage.getItem('reputia_trials') ?? MAX_TRIALS, 10);
+}
+
+function updateTrialUI(left) {
+  const isPro = left === Infinity;
+  const counter = document.getElementById('trial-counter');
+  const dots = document.querySelectorAll('.trial-dot');
+  const btn = document.getElementById('gen-btn');
+  const paywall = document.getElementById('paywall');
+
+  if (isPro) {
+    counter.innerHTML = '<span style="font-size:0.78rem;color:var(--accent);font-weight:500;">✦ Plan Pro — Réponses illimitées</span>';
+    btn.style.display = 'flex';
+    paywall.style.display = 'none';
+    return;
+  }
+
+  const safeLeft = Math.max(0, left);
+  document.getElementById('trial-count').textContent = safeLeft;
+  dots.forEach((dot, i) => {
+    dot.style.background = i < safeLeft ? 'var(--accent)' : 'var(--paper3)';
+  });
+
+  if (safeLeft <= 0) {
+    btn.style.display = 'none';
+    counter.style.display = 'none';
+    paywall.style.display = 'block';
+  } else {
+    btn.style.display = 'flex';
+    paywall.style.display = 'none';
+  }
+}
+
+// ─── DEMO ───
 let currentExample = 0;
 let currentTone = 'professionnel et chaleureux';
+
+const EXAMPLES = [
+  { init: 'MR', name: 'Marie Renard', stars: '★★★★★', rating: 5, text: 'Accueil exceptionnel, plats délicieux et service rapide. Je recommande chaudement ce restaurant, on y reviendra très bientôt !' },
+  { init: 'TL', name: 'Thomas L.', stars: '★★★☆☆', rating: 3, text: 'Bonne cuisine mais le service était un peu lent ce soir-là. L\'ambiance est agréable, les prix corrects. On peut faire mieux sur les délais d\'attente.' },
+  { init: 'SP', name: 'Sophie P.', stars: '★☆☆☆☆', rating: 1, text: 'Très déçue. Nous avons attendu 45 minutes sans être servis. Quand on a demandé à partir, personne ne s\'est excusé. Je ne reviendrai pas.' }
+];
 
 function loadExample(i) {
   currentExample = i;
@@ -621,6 +851,17 @@ document.querySelectorAll('#tones .tone-pill').forEach(btn => {
 });
 
 async function generateResponse() {
+  // Vérifier les essais
+  if (!currentUser) {
+    const left = getLocalTrials();
+    if (left <= 0) {
+      document.getElementById('gen-btn').style.display = 'none';
+      document.getElementById('trial-counter').style.display = 'none';
+      document.getElementById('paywall').style.display = 'block';
+      return;
+    }
+  }
+
   const btn = document.getElementById('gen-btn');
   const btnText = document.getElementById('btn-text');
   const responseArea = document.getElementById('response-area');
@@ -634,6 +875,9 @@ async function generateResponse() {
   btnText.innerHTML = '<span class="spinner"></span> Génération en cours…';
   responseArea.classList.remove('visible');
 
+  const headers = { 'Content-Type': 'application/json' };
+  if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+
   const prompt = `Tu es le gérant de "${bizName}", un ${bizType} français.
 Tu dois répondre à cet avis Google (${review.rating} étoile${review.rating > 1 ? 's' : ''}) de ${review.name} :
 "${review.text}"
@@ -646,27 +890,41 @@ Réponds UNIQUEMENT avec le texte de la réponse, sans guillemets ni introductio
   try {
     const res = await fetch('/api/generate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      headers,
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
     });
+
+    if (res.status === 403) {
+      const err = await res.json();
+      if (err.error === 'limit_reached') {
+        updateTrialUI(0);
+        btn.disabled = false;
+        btnText.textContent = '✦ Générer la réponse par IA';
+        return;
+      }
+    }
+
     const data = await res.json();
     const text = data.content?.map(c => c.text || '').join('') || 'Erreur de génération.';
+
+    // Décrémenter localement si visiteur anonyme
+    if (!currentUser) {
+      const newLeft = getLocalTrials() - 1;
+      localStorage.setItem('reputia_trials', newLeft);
+      updateTrialUI(newLeft);
+    } else if (data._profile) {
+      const left = data._profile.plan === 'pro' ? Infinity : MAX_TRIALS - data._profile.trials_used;
+      currentUser.trials_used = data._profile.trials_used;
+      updateTrialUI(left);
+    }
 
     responseText.textContent = '';
     responseArea.classList.add('visible');
     let i = 0;
     responseText.classList.add('typing');
     const interval = setInterval(() => {
-      responseText.textContent += text[i];
-      i++;
-      if (i >= text.length) {
-        clearInterval(interval);
-        responseText.classList.remove('typing');
-      }
+      responseText.textContent += text[i++];
+      if (i >= text.length) { clearInterval(interval); responseText.classList.remove('typing'); }
     }, 18);
   } catch(err) {
     responseText.textContent = 'Erreur de connexion. Vérifiez votre réseau.';
@@ -676,6 +934,47 @@ Réponds UNIQUEMENT avec le texte de la réponse, sans guillemets ni introductio
   btn.disabled = false;
   btnText.textContent = '✦ Générer la réponse par IA';
 }
+
+function copyResponse() {
+  navigator.clipboard.writeText(document.getElementById('response-text').textContent).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copié !';
+    btn.classList.add('copy-done');
+    setTimeout(() => { btn.textContent = '📋 Copier'; btn.classList.remove('copy-done'); }, 2000);
+  });
+}
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+function scrollToDemo() { document.getElementById('demo').scrollIntoView({ behavior: 'smooth' }); }
+
+async function checkout(plan) {
+  if (!currentUser) { openModal('signup'); return; }
+  const btn = document.getElementById('btn-' + plan);
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = '⏳ Chargement…';
+  try {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+      body: JSON.stringify({ plan })
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else throw new Error(data.error);
+  } catch(e) {
+    alert('Erreur : ' + e.message);
+    btn.disabled = false; btn.textContent = orig;
+  }
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', initAuth);
 
 function copyResponse() {
   const text = document.getElementById('response-text').textContent;
