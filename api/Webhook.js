@@ -1,13 +1,14 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
-
 export const config = { api: { bodyParser: false } };
+
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_KEY
+  );
+}
 
 async function getRawBody(req) {
   return new Promise((resolve, reject) => {
@@ -21,6 +22,7 @@ async function getRawBody(req) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const rawBody = await getRawBody(req);
   const sig = req.headers['stripe-signature'];
 
@@ -28,71 +30,38 @@ export default async function handler(req, res) {
   try {
     event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
-    console.error('Webhook signature error:', err.message);
     return res.status(400).json({ error: `Webhook Error: ${err.message}` });
   }
 
+  const supabase = getSupabase();
+
   try {
-    switch (event.type) {
-
-      case 'checkout.session.completed': {
-        const session = event.data.object;
-        const email = session.customer_details?.email;
-        if (!email) break;
-
-        // Trouver l'utilisateur par email
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      const email = session.customer_details?.email;
+      if (email) {
         const { data: users } = await supabase.auth.admin.listUsers();
         const user = users?.users?.find(u => u.email === email);
-        if (!user) break;
-
-        // Passer au plan Pro
-        await supabase
-          .from('profiles')
-          .update({
+        if (user) {
+          await supabase.from('profiles').update({
             plan: 'pro',
             stripe_customer_id: session.customer,
             stripe_subscription_id: session.subscription,
             plan_started_at: new Date().toISOString()
-          })
-          .eq('id', user.id);
-
-        console.log(`✓ Plan Pro activé pour ${email}`);
-        break;
-      }
-
-      case 'customer.subscription.deleted': {
-        const subscription = event.data.object;
-        const customerId = subscription.customer;
-
-        // Retrouver l'utilisateur par stripe_customer_id
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, email')
-          .eq('stripe_customer_id', customerId);
-
-        if (profiles?.length > 0) {
-          await supabase
-            .from('profiles')
-            .update({ plan: 'free', trials_used: 0 })
-            .eq('stripe_customer_id', customerId);
-
-          console.log(`✓ Plan annulé pour customer ${customerId}`);
+          }).eq('id', user.id);
         }
-        break;
-      }
-
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object;
-        console.log(`⚠️ Paiement échoué pour customer ${invoice.customer}`);
-        // On pourrait envoyer un email ici
-        break;
       }
     }
 
-    return res.status(200).json({ received: true });
+    if (event.type === 'customer.subscription.deleted') {
+      const customerId = event.data.object.customer;
+      await supabase.from('profiles')
+        .update({ plan: 'free', trials_used: 0 })
+        .eq('stripe_customer_id', customerId);
+    }
 
+    return res.status(200).json({ received: true });
   } catch (error) {
-    console.error('Webhook handler error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
