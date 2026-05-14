@@ -1,14 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
-
 const MAX_FREE_TRIALS = 3;
+
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_KEY
+  );
+}
 
 async function getUserFromToken(token) {
   if (!token) return null;
+  const supabase = getSupabase();
   const { data, error } = await supabase.auth.getUser(token);
   if (error || !data.user) return null;
   return data.user;
@@ -21,8 +24,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.replace('Bearer ', '');
+  const supabase = getSupabase();
+  const token = req.headers.authorization?.replace('Bearer ', '');
   const user = await getUserFromToken(token);
 
   if (user) {
