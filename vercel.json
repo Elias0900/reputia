@@ -1,4 +1,8 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false
+  "rewrites": [
+    { "source": "/", "destination": "/home.html" },
+    { "source": "/blog", "destination": "/blog/liste.html" },
+    { "source": "/blog/:path*", "destination": "/blog/:path*.html" },
+    { "source": "/api/:path*", "destination": "/api/:path*" }
+  ]
 }
