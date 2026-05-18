@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Réputia — Conseils réputation Google pour les PME françaises</title>
+<meta name="description" content="Guides pratiques, conseils et stratégies pour gérer votre réputation Google et répondre à vos avis clients. Ressources gratuites pour les PME françaises.">
+<meta name="keywords" content="blog réputation Google, avis Google PME, gestion réputation locale, répondre avis clients">
+<link rel="canonical" href="https://reputia.fr/blog">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Blog Réputia","description":"Conseils réputation Google pour les PME françaises","url":"https://reputia.fr/blog","publisher":{"@type":"Organization","name":"Réputia","url":"https://reputia.fr"}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0f0e0c; --ink2: #3d3b35; --ink3: #7a7770;
+    --paper: #faf8f4; --paper2: #f0ede6; --paper3: #e5e0d6;
+    --accent: #2a6e4e; --accent2: #1d5038; --accent-light: #e8f3ed;
+    --gold: #c4922a; --gold-light: #fdf5e6;
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--paper); color: var(--ink); line-height: 1.6; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,244,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--paper3);
+    padding: 0 2rem; display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .logo { font-family: var(--font-display); font-size: 1.4rem; color: var(--ink); text-decoration: none; }
+  .logo span { color: var(--accent); }
+  .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+  .nav-right a { font-size: 0.875rem; color: var(--ink2); text-decoration: none; transition: color 0.18s; }
+  .nav-right a:hover { color: var(--accent); }
+  .btn-nav {
+    background: var(--accent); color: #fff; padding: 8px 18px;
+    border-radius: 6px; font-size: 0.875rem; font-weight: 500;
+    text-decoration: none; transition: background 0.2s;
+  }
+  .btn-nav:hover { background: var(--accent2); color: #fff; }
+
+  /* HERO */
+  .blog-hero {
+    max-width: 760px; margin: 0 auto;
+    padding: 4rem 2rem 3rem; text-align: center;
+  }
+  .blog-hero .label {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 1rem;
+  }
+  .blog-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 1rem;
+  }
+  .blog-hero h1 em { color: var(--accent); font-style: italic; }
+  .blog-hero p { font-size: 1rem; color: var(--ink2); max-width: 500px; margin: 0 auto; }
+
+  /* GRID */
+  .blog-grid-wrap {
+    max-width: 960px; margin: 0 auto; padding: 0 2rem 5rem;
+  }
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem; margin-top: 0;
+  }
+  .blog-card {
+    background: var(--paper);
+    border: 1.5px solid var(--paper3);
+    border-radius: 14px; padding: 1.75rem;
+    text-decoration: none; color: inherit;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    display: flex; flex-direction: column;
+  }
+  .blog-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(42,110,78,0.1);
+  }
+  .card-cat {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem; line-height: 1.3; letter-spacing: -0.01em;
+    color: var(--ink); margin-bottom: 0.75rem;
+  }
+  .card-desc {
+    font-size: 0.875rem; color: var(--ink2);
+    line-height: 1.6; flex: 1; margin-bottom: 1.25rem;
+  }
+  .card-meta {
+    font-size: 0.78rem; color: var(--ink3);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .card-meta::before { content: '→'; color: var(--accent); font-weight: 600; }
+
+  /* CTA BANNER */
+  .cta-banner {
+    background: var(--ink); border-radius: 16px;
+    padding: 2.5rem 2rem; text-align: center;
+    margin: 1rem 0 0;
+  }
+  .cta-banner h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: #fff; letter-spacing: -0.02em; margin-bottom: 0.75rem;
+  }
+  .cta-banner p { color: rgba(255,255,255,0.6); font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .cta-banner a {
+    display: inline-block;
+    background: var(--accent); color: #fff;
+    padding: 13px 28px; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 500;
+    text-decoration: none; transition: background 0.2s;
+  }
+  .cta-banner a:hover { background: var(--accent2); }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink); color: rgba(255,255,255,0.5);
+    text-align: center; padding: 2rem; font-size: 0.8rem;
+  }
+  footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .blog-hero { padding: 3rem 1.5rem 2rem; }
+    .blog-grid-wrap { padding: 0 1.5rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="/">Réput<span>ia</span></a>
+  <div class="nav-right">
+    <a href="/">Accueil</a>
+    <a href="/#pricing">Tarifs</a>
+    <a class="btn-nav" href="/">Essai gratuit →</a>
+  </div>
+</nav>
+
+<div class="blog-hero">
+  <div class="label">Ressources gratuites</div>
+  <h1>Gérez votre réputation Google<br><em>comme un expert.</em></h1>
+  <p>Guides pratiques, conseils actionnables et stratégies éprouvées pour les PME françaises qui veulent améliorer leur note Google et fidéliser leurs clients.</p>
+</div>
+
+<div class="blog-grid-wrap">
+  <div class="blog-grid">
+
+    <a class="blog-card" href="/blog/repondre-avis-google">
+      <div class="card-cat">Guide pratique</div>
+      <div class="card-title">Comment répondre aux avis Google : guide complet 2026</div>
+      <div class="card-desc">Bonnes pratiques, exemples de réponses et erreurs à éviter pour transformer chaque avis en opportunité commerciale.</div>
+      <div class="card-meta">Lire l'article · 8 min</div>
+    </a>
+
+    <a class="blog-card" href="/blog/importance-reputation-google">
+      <div class="card-cat">Réputation</div>
+      <div class="card-title">Pourquoi votre réputation Google est votre meilleur commercial</div>
+      <div class="card-desc">La réputation Google d'une PME influence directement ses ventes. Découvrez comment en faire un levier de croissance puissant.</div>
+      <div class="card-meta">Lire l'article · 6 min</div>
+    </a>
+
+    <a class="blog-card" href="/blog/gestion-avis-negatifs">
+      <div class="card-cat">Gestion de crise</div>
+      <div class="card-title">Gérer les avis négatifs Google sans perdre de clients</div>
+      <div class="card-desc">Un avis négatif peut faire ou défaire votre réputation. Découvrez comment transformer les critiques en opportunités.</div>
+      <div class="card-meta">Lire l'article · 5 min</div>
+    </a>
+
+  </div>
+
+  <div class="cta-banner" style="margin-top: 3rem;">
+    <h2>Arrêtez de répondre à la main.</h2>
+    <p>Réputia génère des réponses professionnelles à vos avis Google en 1 clic. Gratuit jusqu'à 5 réponses/mois.</p>
+    <a href="/">Essayer gratuitement →</a>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Réputia · <a href="/">Accueil</a> · <a href="mailto:contact@reputia.fr">Contact</a></p>
+</footer>
+
+</body>
+</html>

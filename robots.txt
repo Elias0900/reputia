@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://reputia.app/sitemap.xml
+Sitemap: https://reputia.fr/sitemap.xml
