@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-const MAX_FREE_TRIALS = 3;
+const MAX_FREE_TRIALS = 5;
 
 function getSupabase() {
   return createClient(

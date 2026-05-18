@@ -5,16 +5,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const PLANS = {
   pro: {
     name: 'Réputia Pro',
-    amount: 2900,
+    amount: 1400,
     interval: 'month',
     trial_days: 14,
-    description: 'Réponses illimitées · 3 établissements · Mode automatique'
+    description: 'Réponses illimitées · Tous les tons · Support par email'
   },
   multisites: {
     name: 'Réputia Multi-sites',
-    amount: 7900,
+    amount: 3900,
     interval: 'month',
-    trial_days: 0,
+    trial_days: 14,
     description: 'Réponses illimitées · Établissements illimités · Support prioritaire'
   }
 };
