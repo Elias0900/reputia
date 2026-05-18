@@ -26,6 +26,11 @@
     --font-body: 'DM Sans', sans-serif;
   }
 
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 70px;
+  }
+
   body {
     font-family: var(--font-body);
     background: var(--paper);
@@ -47,10 +52,11 @@
   .logo { font-family: var(--font-display); font-size: 1.5rem; color: var(--ink); letter-spacing: -0.02em; }
   .logo span { color: var(--accent); }
   nav .nav-links { display: flex; gap: 2rem; align-items: center; }
-  nav .nav-links a { font-size: 0.875rem; color: var(--ink2); text-decoration: none; }
+  nav .nav-links a { font-size: 0.875rem; color: var(--ink2); text-decoration: none; transition: color 0.18s; }
   nav .nav-links a:hover { color: var(--accent); }
-  .btn-nav { background: var(--accent); color: #fff; padding: 8px 18px; border-radius: 6px; font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 0.2s; }
+  .btn-nav { background: var(--accent); color: #fff; padding: 8px 18px; border-radius: 6px; font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 0.2s, transform 0.1s; }
   .btn-nav:hover { background: var(--accent2); }
+  .btn-nav:active { transform: scale(0.96); }
 
   /* ─── HERO ─── */
   .hero {
@@ -85,14 +91,16 @@
     transition: background 0.2s, transform 0.1s;
   }
   .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-primary:active { background: var(--accent2); transform: translateY(1px) scale(0.985); }
   .btn-secondary {
     background: transparent; color: var(--ink);
     padding: 14px 28px; border-radius: 8px;
     font-size: 1rem; font-weight: 400;
     text-decoration: none; border: 1.5px solid var(--paper3);
-    cursor: pointer; transition: border-color 0.2s;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.1s;
   }
-  .btn-secondary:hover { border-color: var(--ink2); }
+  .btn-secondary:hover { border-color: var(--ink2); background: var(--paper2); }
+  .btn-secondary:active { transform: scale(0.985); }
   .hero-note { font-size: 0.8rem; color: var(--ink3); margin-top: 1rem; }
 
   /* ─── DEMO WIDGET ─── */
@@ -176,13 +184,14 @@
     padding: 5px 12px; border-radius: 20px;
     border: 1.5px solid var(--paper3);
     background: var(--paper); color: var(--ink2);
-    cursor: pointer; transition: all 0.15s;
+    cursor: pointer; transition: all 0.15s, transform 0.1s;
   }
   .tone-pill.active, .tone-pill:hover {
     border-color: var(--accent);
     background: var(--accent-light);
     color: var(--accent);
   }
+  .tone-pill:active { transform: scale(0.94); }
 
   .generate-btn {
     width: 100%;
@@ -190,20 +199,31 @@
     border: none; border-radius: 8px;
     padding: 13px; font-family: var(--font-body);
     font-size: 0.95rem; font-weight: 500;
-    cursor: pointer; transition: background 0.2s;
+    cursor: pointer; transition: background 0.2s, transform 0.1s;
     display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .generate-btn:hover { background: var(--accent2); }
-  .generate-btn:disabled { background: var(--ink3); cursor: not-allowed; }
+  .generate-btn:hover:not(:disabled) { background: var(--accent2); transform: translateY(-1px); }
+  .generate-btn:active:not(:disabled) { transform: translateY(1px) scale(0.985); }
+  .generate-btn:disabled { background: var(--ink3); cursor: not-allowed; opacity: 0.7; }
 
   .response-area {
     margin-top: 16px;
     background: var(--accent-light);
     border: 1px solid #b8dcc9;
     border-radius: 10px; padding: 16px;
-    display: none;
+    opacity: 0; visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s;
+    max-height: 0; overflow: hidden;
+    padding: 0; margin-top: 0;
   }
-  .response-area.visible { display: block; }
+  .response-area.visible {
+    opacity: 1; visibility: visible;
+    transform: translateY(0);
+    max-height: 600px;
+    padding: 16px; margin-top: 16px;
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s, max-height 0.4s ease, padding 0.35s ease, margin-top 0.35s ease;
+  }
   .response-label {
     font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
     text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
@@ -219,9 +239,10 @@
     padding: 6px 14px; border-radius: 6px;
     border: 1.5px solid var(--paper3);
     background: var(--paper); color: var(--ink2);
-    cursor: pointer; transition: all 0.15s;
+    cursor: pointer; transition: all 0.15s, transform 0.1s;
   }
   .btn-small:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-small:active { transform: scale(0.94); }
   .btn-small.copy-done { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 
   .spinner {
@@ -292,11 +313,13 @@
     padding: 11px; border-radius: 8px;
     font-size: 0.9rem; font-weight: 500;
     text-decoration: none; border: 1.5px solid var(--ink);
-    color: var(--ink); transition: all 0.2s;
+    color: var(--ink); transition: all 0.2s, transform 0.1s;
+    cursor: pointer;
   }
-  .plan-cta:hover { background: var(--ink); color: var(--paper); }
+  .plan-cta:hover { background: var(--ink); color: var(--paper); transform: translateY(-1px); }
+  .plan-cta:active { transform: scale(0.98); }
   .plan-cta.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .plan-cta.primary:hover { background: var(--accent2); border-color: var(--accent2); }
+  .plan-cta.primary:hover { background: var(--accent2); border-color: var(--accent2); transform: translateY(-1px); }
 
   /* ─── FAQ ─── */
   .faq-list { margin-top: 2rem; }
@@ -354,10 +377,11 @@
     width: 100%; padding: 12px; background: var(--accent); color: #fff;
     border: none; border-radius: 8px; font-family: var(--font-body);
     font-size: 0.95rem; font-weight: 500; cursor: pointer;
-    transition: background 0.15s; margin-top: 4px;
+    transition: background 0.15s, transform 0.1s; margin-top: 4px;
   }
-  .modal-btn:hover { background: var(--accent2); }
-  .modal-btn:disabled { background: var(--ink3); cursor: not-allowed; }
+  .modal-btn:hover:not(:disabled) { background: var(--accent2); }
+  .modal-btn:active:not(:disabled) { transform: scale(0.985); }
+  .modal-btn:disabled { background: var(--ink3); cursor: not-allowed; opacity: 0.7; }
   .modal-error { font-size: 0.82rem; color: #c0392b; margin-bottom: 8px; display: none; }
   .modal-switch { font-size: 0.82rem; color: var(--ink3); text-align: center; margin-top: 1rem; }
   .modal-switch a { color: var(--accent); cursor: pointer; text-decoration: underline; }
@@ -386,6 +410,29 @@
     color: var(--accent);
   }
   @keyframes blink { 50% { opacity: 0; } }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  .reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ─── REVIEW CARD TRANSITION ─── */
+  .review-card {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .review-card.switching {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 
   /* ─── RESPONSIVE ─── */
   @media (max-width: 600px) {
@@ -548,22 +595,22 @@
   <h2 class="section-title">Simple comme bonjour</h2>
   <p class="section-sub">Connectez votre fiche Google, c'est tout. Réputia fait le reste.</p>
   <div class="steps">
-    <div class="step">
+    <div class="step reveal">
       <div class="step-num">01</div>
       <h3>Connectez votre fiche Google</h3>
       <p>Autorisez Réputia à accéder à votre fiche Google Business Profile en 2 clics. Aucune compétence technique requise.</p>
     </div>
-    <div class="step">
+    <div class="step reveal reveal-delay-1">
       <div class="step-num">02</div>
       <h3>Définissez votre ton</h3>
       <p>Choisissez le style de réponse qui correspond à votre image de marque. Réputia apprend de vos préférences au fil du temps.</p>
     </div>
-    <div class="step">
+    <div class="step reveal reveal-delay-2">
       <div class="step-num">03</div>
       <h3>Validez ou automatisez</h3>
       <p>Recevez les réponses par email pour valider avant publication, ou activez le mode automatique pour répondre sans intervention.</p>
     </div>
-    <div class="step">
+    <div class="step reveal reveal-delay-3">
       <div class="step-num">04</div>
       <h3>Votre réputation s'améliore</h3>
       <p>Plus de réponses = meilleur classement local sur Google, plus de confiance client, plus de conversions.</p>
@@ -579,7 +626,7 @@
     <p class="section-sub">Résiliez à tout moment. Aucun engagement.</p>
     <div class="pricing-grid">
 
-      <div class="plan-card">
+      <div class="plan-card reveal">
         <div class="plan-name">Gratuit</div>
         <div class="plan-price">0 €<span> /mois</span></div>
         <div class="plan-desc">Pour tester et se convaincre.</div>
@@ -594,7 +641,7 @@
         <button onclick="scrollToDemo()" class="plan-cta">Commencer gratuitement</button>
       </div>
 
-      <div class="plan-card featured">
+      <div class="plan-card featured reveal reveal-delay-1">
         <div class="plan-badge">Le plus populaire</div>
         <div class="plan-name">Pro</div>
         <div class="plan-price">29 €<span> /mois</span></div>
@@ -610,7 +657,7 @@
         <button onclick="checkout('pro')" id="btn-pro" class="plan-cta primary">Essayer 14 jours gratuits</button>
       </div>
 
-      <div class="plan-card">
+      <div class="plan-card reveal reveal-delay-2">
         <div class="plan-name">Multi-sites</div>
         <div class="plan-price">79 €<span> /mois</span></div>
         <div class="plan-desc">Pour les chaînes et franchises.</div>
@@ -834,10 +881,15 @@ const EXAMPLES = [
 function loadExample(i) {
   currentExample = i;
   const e = EXAMPLES[i];
-  document.getElementById('av').textContent = e.init;
-  document.getElementById('rev-name').textContent = e.name;
-  document.getElementById('rev-stars').textContent = e.stars;
-  document.getElementById('rev-text').textContent = e.text;
+  const card = document.getElementById('review-display');
+  card.classList.add('switching');
+  setTimeout(() => {
+    document.getElementById('av').textContent = e.init;
+    document.getElementById('rev-name').textContent = e.name;
+    document.getElementById('rev-stars').textContent = e.stars;
+    document.getElementById('rev-text').textContent = e.text;
+    card.classList.remove('switching');
+  }, 200);
   document.querySelectorAll('#examples .tone-pill').forEach((b,j) => b.classList.toggle('active', j===i));
   document.getElementById('response-area').classList.remove('visible');
 }
@@ -974,53 +1026,20 @@ async function checkout(plan) {
 }
 
 // Init
-document.addEventListener('DOMContentLoaded', initAuth);
+document.addEventListener('DOMContentLoaded', () => {
+  initAuth();
 
-function copyResponse() {
-  const text = document.getElementById('response-text').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('copy-btn');
-    btn.textContent = '✓ Copié !';
-    btn.classList.add('copy-done');
-    setTimeout(() => { btn.textContent = '📋 Copier'; btn.classList.remove('copy-done'); }, 2000);
-  });
-}
-
-function toggleFaq(el) {
-  const item = el.parentElement;
-  const wasOpen = item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-  if (!wasOpen) item.classList.add('open');
-}
-
-function scrollToDemo() {
-  document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
-}
-
-async function checkout(plan) {
-  const btn = document.getElementById('btn-' + plan);
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = '⏳ Chargement…';
-
-  try {
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan })
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        observer.unobserve(entry.target);
+      }
     });
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      throw new Error(data.error || 'Erreur inconnue');
-    }
-  } catch (err) {
-    alert('Une erreur est survenue : ' + err.message + '\nRéessayez dans quelques instants.');
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
-}
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+});
 </script>
 </body>
 </html>
